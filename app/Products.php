@@ -3,27 +3,77 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
 
 class Products extends Model
 {
+
     public function User(){
 
         return $this->hasOne('App\User');
     }
 
-    //To Do Ask best way to transfer date, DB "acoplamentation"
-    public function getProductsById($user_id){
-        $sql=DB::table('products')
-                ->select(DB::raw('*'))
-                ->where('user_id','=',$user_id)
-                ->get();
-
-        return $sql;
+    public function Puntuation(){
+        return $this->hasOne('App\Puntuation');
     }
 
+    public function getFeaturedProducts(){
 
+       $featuredProducts = Products::all()->sortByDesc('points')->take('6');
+       return $featuredProducts;
+
+    //To Do Ask Correct Use
+       /* $products = collect(Products::all());
+       $featuredProducts = $products->sortByDesc('points')->take('6');
+    */
+    }
+
+    public function addPoints($id_product){
+        $id_product->update();
+    }
 
     protected $fillable = [
-        'user_id','name','description'
+        'user_id','name','description', 'initial_price', 'points'
     ];
+
+
+
+
+    public function upDateProductsImages($data)
+    {
+
+
+         if($data->hasFile('fileImage'))
+         {
+             $file=$data->file('fileImage');
+
+             $extension=$file->getClientOriginalExtension();
+
+             $date=$file->getCTime();
+             $file_name=$this->id.'-'.$date.'.'.$extension;
+             $file->storeAs("products/$this->id",$file_name);
+
+
+             return "Image Uploaded";
+
+         }
+
+     }
+
+     public function getProductsImages()
+     {
+         $path="products/$this->id/";
+         $result=Storage::files($path);
+         if(empty($result)){
+             $empty = ['/default/default.svg'];
+             return $empty;
+         }
+
+
+         return $result;
+     }
+
+
+
 }

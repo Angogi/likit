@@ -2,13 +2,16 @@
 
 
 
-Route::get('/', 'ProfileController@index');
+Route::get('/', 'SiteController@index');
 
 Auth::routes();
 
 Route::resource('/profile','ProfileController');
 
+
 Route::resource('/product','ProductsController');
+
+//Route::get('/product/{product}/', 'ProductsController@show')->middleware('points', '{product}');
 
 // Proteccion de rutas
 

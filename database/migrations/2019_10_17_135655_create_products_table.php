@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->double('final_price',10)->nullable();
             $table->double('initial_price',10)->nullable();
             $table->text('description', 500)->nullable();
+            $table->bigInteger('points')->nullable();
             $table->timestamps();
         });
     }

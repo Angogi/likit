@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Products;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
+
+
+
 
 class ProductsController extends Controller
 {
@@ -14,8 +18,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products=Products::all();
-        return json_encode($products);
+       
     }
 
     /**
@@ -66,9 +69,11 @@ class ProductsController extends Controller
      */
     public function show(Products $product)
     {
-        $productDetail = $product;
-        //
-        return view('productDetail', ['productDetails' => $productDetail]);
+       
+        $productImages = $product->getProductsImages();
+        
+        return view('productDetail', ['productDetails' => $product, 'productImages' => $productImages]);
+
 
     }
 
@@ -78,9 +83,15 @@ class ProductsController extends Controller
      * @param  \App\Products  $products
      * @return \Illuminate\Http\Response
      */
-    public function edit(Products $products)
+    public function edit(Products $product)
     {
-        //
+        if($this->authorize('edit',$product)){
+            return view('products/products-edit-form', ['product' => $product]);
+        }
+        return view('content');
+
+
+        
     }
 
     /**
@@ -90,9 +101,11 @@ class ProductsController extends Controller
      * @param  \App\Products  $products
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, Products $product)
     {
-        //
+        $product->upDateProductsImages($request);
+        $product->update($request->all());
+        return redirect("product/$product->id");
     }
 
     /**
