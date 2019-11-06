@@ -6,6 +6,7 @@ use App\Profile;
 use App\User;
 use App\Products;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class ProfileController extends Controller
 {
@@ -14,10 +15,10 @@ class ProfileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Profile $profile)
     {
-        $profiles=Profile::all();
-        return view('content',['profiles' => $profiles]);
+
+        
     }
 
     /**
@@ -27,10 +28,8 @@ class ProfileController extends Controller
      */
     public function create(array $data)
     {
-        
-        /* --------------- To Do Ask diference Between create and store ---------- */
-       
-    }
+
+        /* --------------- To Do Ask diference Between create and store ---------- */ }
 
     /**
      * Store a newly created resource in storage.
@@ -40,7 +39,7 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //        
     }
 
     /**
@@ -51,8 +50,11 @@ class ProfileController extends Controller
      */
     public function show(Profile $profile)
     {
-        $profileDetails = $profile;
-        return view('profileDetail',['profileDetails' => $profileDetails]);
+        
+        $currentImage = $profile->getProfileImage();
+        $products = $profile->user->products;
+        return view('profileDetail', ['profileDetails' => $profile, 'profile_Image' => $currentImage, 'userProducts' => $products]);
+    
     }
 
     /**
@@ -63,8 +65,12 @@ class ProfileController extends Controller
      */
     public function edit(Profile $profile)
     {
-       
-        return view('editProfile',['profile' => $profile]);
+            if($this->authorize('edit',$profile)){
+                return view('editProfile', ['profile' => $profile]);
+            }
+            return view('content');
+    
+     
     }
 
     /**
@@ -76,7 +82,11 @@ class ProfileController extends Controller
      */
     public function update(Request $request, Profile $profile)
     {
+
+        $profile->upDateProfileImage($request);
+        
         $profile->update($request->all());
+        
         return redirect("profile/$profile->user_id");
     }
 
@@ -94,7 +104,10 @@ class ProfileController extends Controller
     // To Do ask 
     public function getProductsByUser($user)
     {
-        $products=Products::all();
-        return view("profile/$user",['products' => $products]);
+        $products = Products::all();
+        return view("profile/$user", ['products' => $products]);
     }
+        
+
+        
 }

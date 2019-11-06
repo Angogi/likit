@@ -14,9 +14,15 @@
                         </div>
                     @endif
                     <div class="col-md-6">
-                        <div class="rounded-circle" style="width:200px; height: 200px; background-color:grey;">
-                      <img src="../photos/products/{{$productDetails->id}}.jpg" class="rounded-circle" style="width:200px; heigth:200px; background-color:black;"  alt=".">  
-                    </div>
+                        
+                        @foreach ($productImages as $productImage )
+                      
+                        <div style="width:300px; height: 300px; background-color:grey;">
+                        <img src="../storage/{{$productImage}}" style="width:100%; heigth:auto; background-color:black;"  alt=".">  
+                       
+                        </div>
+                        @endforeach
+                        
                     </div>
 
                     <div class="col-md-6">
@@ -32,6 +38,9 @@
                 </div>
                 <div class="card" style="margin-top:30px;">
                 <div class="card-header">Comentarios</div>
+                @can('edit',$productDetails)
+               <a href="{{$productDetails->id}}/edit"> <button class="btn btn-primary btn-sm"> editar producto</button></a>
+               @endCan
                 <div name="product" id="product" class="card-body" style="display: flex; flex-wrap:wrap;justify-content:flex-start;">
                   
 
